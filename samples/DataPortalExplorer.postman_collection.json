@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "bc21dece-475d-4109-ae36-dc7538a48cb7",
+		"name": "DataPortalExplorer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "status_show",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/status_show",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"status_show"
+					]
+				},
+				"description": "Returns a dictionary with information about the site’s configuration, including information about the extensions."
+			},
+			"response": []
+		},
+		{
+			"name": "organization_list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/organization_list",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"organization_list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "package_list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/package_list",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"package_list"
+					]
+				},
+				"description": "Return a list of the names of the site’s datasets (packages)."
+			},
+			"response": []
+		},
+		{
+			"name": "current_package_list_with_resources",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/current_package_list_with_resources",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"current_package_list_with_resources"
+					]
+				},
+				"description": "Return a list of the site’s datasets (packages) and their resources."
+			},
+			"response": []
+		},
+		{
+			"name": "tag_list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/tag_list",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"tag_list"
+					]
+				},
+				"description": "A list of all tags, even ones that are not in use"
+			},
+			"response": []
+		},
+		{
+			"name": "top_100_tags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/package_search?facet.field=[\"tags\"]&facet.limit=-1&rows=0",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"package_search"
+					],
+					"query": [
+						{
+							"key": "facet.field",
+							"value": "[\"tags\"]"
+						},
+						{
+							"key": "facet.limit",
+							"value": "-1"
+						},
+						{
+							"key": "rows",
+							"value": "0"
+						}
+					]
+				},
+				"description": "Top 100 tags used by datasets"
+			},
+			"response": []
+		},
+		{
+			"name": "top_100_themes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ckan.publishing.service.gov.uk/api/3/action/package_search?facet.field=[\"theme-primary\"]&facet.limit=100&rows=0",
+					"protocol": "https",
+					"host": [
+						"ckan",
+						"publishing",
+						"service",
+						"gov",
+						"uk"
+					],
+					"path": [
+						"api",
+						"3",
+						"action",
+						"package_search"
+					],
+					"query": [
+						{
+							"key": "facet.field",
+							"value": "[\"theme-primary\"]"
+						},
+						{
+							"key": "facet.limit",
+							"value": "100"
+						},
+						{
+							"key": "rows",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
