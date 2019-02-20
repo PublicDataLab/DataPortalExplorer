@@ -10,4 +10,4 @@ To use the tools or notebooks in the repository run the following commands in th
 
 1. Run the notebooks: `pipenv run jupyter lab`
 
-1. [Jupyter Lab]() should open in a new browser window after running the previous command, if not, go to http://localhost:8888/
+1. [Jupyter Lab](https://jupyterlab.readthedocs.io/en/stable/) should open in a new browser window after running the previous command, if not, go to http://localhost:8888/
