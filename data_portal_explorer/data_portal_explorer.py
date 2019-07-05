@@ -3,6 +3,7 @@
 """Main module."""
 
 from ckanapi import RemoteCKAN
+from itertools import count
 
 PORTALS = {
     'data.kdl.kcl.ac.uk': {
@@ -52,16 +53,30 @@ def get_facets(name):
     return facets
 
 
-def get_packages():
-    packages = list()
+def get_packages(limit):
+    if limit < 1:
+        limit = float('inf')
 
     for k in PORTALS.keys():
         portal = RemoteCKAN(PORTALS[k]['url'])
 
-        r = portal.action.package_search()
-        if r:
+        start = 0
+        rows = 1000
+
+        counter = count(start=1, step=1)
+
+        while True:
+            r = portal.action.package_search(start=start, rows=rows)
+
+            if not r:
+                break
+
             for package in r['results']:
                 package['_portal'] = k
-                packages.append(package)
+                yield package
 
-    return packages
+            results_count = r['count']
+            start = next(counter) * rows
+
+            if start >= results_count or start >= limit:
+                break
