@@ -11,7 +11,8 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=6.0', ]
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read()
 
 setup_requirements = []
 
@@ -31,7 +32,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    description=" This package contains tools to extract metadata from CKAN instances which can be used to study data portals as infrastructures from the perspective of social/cultural research.",
+    description="This package contains tools to extract metadata from CKAN instances which can be used to study data portals as infrastructures from the perspective of social/cultural research.",
     entry_points={
         'console_scripts': [
             'data_portal_explorer=data_portal_explorer.cli:main',
