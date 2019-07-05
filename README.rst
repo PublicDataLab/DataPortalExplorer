@@ -31,6 +31,8 @@ Features
 --------
 
 * TODO
+1. Get metadata about resources: start with csvs; dates (min, max), headers
+1. export in gephy format
 
 Credits
 -------
