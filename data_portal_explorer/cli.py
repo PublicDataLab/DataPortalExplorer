@@ -8,8 +8,9 @@ import sys
 import click
 
 import pandas as pd
-from data_portal_explorer import get_extensions, get_facets, get_packages
 from pandas.io.json import json_normalize
+
+from .data_portal_explorer import get_extensions, get_facets, get_packages
 
 
 @click.group(chain=True)
