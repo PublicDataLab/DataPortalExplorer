@@ -13,14 +13,14 @@ Data Portal Explorer
         :target: https://data-portal-explorer.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-
 .. image:: https://pyup.io/repos/github/kingsdigitallab/data_portal_explorer/shield.svg
      :target: https://pyup.io/repos/github/kingsdigitallab/data_portal_explorer/
      :alt: Updates
 
 
 
- This package contains tools to extract metadata from CKAN instances which can be used to study data portals as infrastructures from the perspective of social/cultural research.
+This package contains tools to extract metadata from CKAN instances which can be used to study data portals as infrastructures from the perspective of social/cultural research.
+
 
 
 * Free software: MIT license
@@ -31,9 +31,9 @@ Features
 --------
 
 * TODO
-1. Get metadata about resources: start with csvs; dates (min, max), headers
 
-1. export in gephy format
+        #. Get metadata about resources: start with csvs; dates (min, max), headers
+        #. Export in gephy format
 
 Credits
 -------
