@@ -32,10 +32,12 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    description="This package contains tools to extract metadata from CKAN instances which can be used to study data portals as infrastructures from the perspective of social/cultural research.",
+    description="""This package contains tools to extract metadata from CKAN
+    instances which can be used to study data portals as infrastructures from
+    the perspective of social/cultural research.""",
     entry_points={
         'console_scripts': [
-            'data_portal_explorer=data_portal_explorer.cli:main',
+            'data_portal_explorer=data_portal_explorer.cli:cli',
         ],
     },
     install_requires=requirements,
@@ -48,7 +50,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/kingsdigitallab/data_portal_explorer',
+    url='https://gitlab.com/kingsdigitallab/data_portal_explorer',
     version='0.1.0',
     zip_safe=False,
 )
