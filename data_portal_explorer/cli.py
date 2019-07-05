@@ -68,14 +68,16 @@ def themes(ctx):
 
 
 @cli.command()
+@click.option(
+    '--limit', default=0, show_default=True, type=click.INT)
 @click.pass_context
-def packages(ctx):
+def packages(ctx, limit):
     """Gets packages."""
     click.echo('- Getting packages')
 
-    data = get_packages()
+    data = get_packages(limit)
 
-    _save(ctx, 'packages', data, normalise=True)
+    _save(ctx, 'packages', list(data), normalise=True)
 
 
 def _save(ctx, filename, data, normalise=False):
