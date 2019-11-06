@@ -8,9 +8,25 @@ import sys
 import click
 
 import pandas as pd
+from data_portal_explorer.data_portal_explorer import (
+    get_extensions, get_facets, get_packages, get_resources
+)
 from pandas.io.json import json_normalize
 
-from .data_portal_explorer import get_extensions, get_facets, get_packages
+PORTALS = {
+    'data.kdl.kcl.ac.uk': {
+        'key': 'data.kdl.kcl.ac.uk',
+        'url': 'https://data.kdl.kcl.ac.uk/',
+        'themes': 'theme-primary'
+    },
+    'data.gov.uk': {
+        'key': 'data.gov.uk',
+        'url': 'https://ckan.publishing.service.gov.uk/',
+        'themes': 'theme-primary',
+        'search-page-field': 'offset',
+        'search-page-size-field': 'limit'
+    }
+}
 
 
 @click.group(chain=True)
@@ -38,7 +54,7 @@ def cli(ctx, fmt, dest):
 def extensions(ctx):
     """Gets the available extensions."""
     click.echo('- Getting extensions')
-    data = get_extensions()
+    data = get_extensions(PORTALS)
 
     _save(ctx, 'extensions', data)
 
@@ -50,7 +66,7 @@ def tags(ctx):
     click.echo('- Getting tags')
 
     name = 'tags'
-    data = get_facets(name)
+    data = get_facets(PORTALS, name)
 
     _save(ctx, name, data)
 
@@ -62,22 +78,52 @@ def themes(ctx):
     click.echo('- Getting themes')
 
     name = 'themes'
-    data = get_facets(name)
+    data = get_facets(PORTALS, name)
 
     _save(ctx, name, data)
 
 
 @cli.command()
-@click.option(
-    '--limit', default=0, show_default=True, type=click.INT)
+@click.option('--start', default=0, show_default=True, type=click.INT)
+@click.option('--rows', default=20, show_default=True, type=click.INT)
+@click.option('--limit', default=0, show_default=True, type=click.INT)
 @click.pass_context
-def packages(ctx, limit):
+def packages(ctx, start, rows, limit):
     """Gets packages."""
     click.echo('- Getting packages')
 
-    data = get_packages(limit)
+    data = []
 
-    _save(ctx, 'packages', list(data), normalise=True)
+    for k in PORTALS.keys():
+        click.echo('. {} '.format(k), nl=False)
+
+        portal = PORTALS[k]
+        start = 0
+
+        while start >= 0:
+            click.echo('.', nl=False)
+            portal_data, start = get_packages(portal, start, rows, limit)
+            data += portal_data
+
+        click.echo()
+        _save(ctx, 'packages', data, normalise=True)
+
+
+@cli.command()
+@click.argument('packages_json', type=click.File('r'))
+@click.pass_context
+def resources(ctx, packages_json):
+    """Extracts metadata from resources from previously downloaded
+    packages metadata."""
+    click.echo('- Extracting resources metadata')
+
+    data = []
+    packages = json.load(packages_json)
+
+    with click.progressbar(packages) as bar:
+        for package in bar:
+            data += get_resources(package)
+            _save(ctx, 'resources', list(data), normalise=True)
 
 
 def _save(ctx, filename, data, normalise=False):
