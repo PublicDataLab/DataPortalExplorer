@@ -2,28 +2,22 @@
 
 """Main module."""
 
+import http
+import socket
+import urllib
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor as PoolExecutor
+from itertools import repeat
+
+import pandas as pd
 from ckanapi import RemoteCKAN
-from itertools import count
-
-PORTALS = {
-    'data.kdl.kcl.ac.uk': {
-        'url': 'https://data.kdl.kcl.ac.uk/',
-        'themes': 'theme-primary'
-    },
-    'data.gov.uk': {
-        'url': 'https://ckan.publishing.service.gov.uk/',
-        'themes': 'theme-primary',
-        'search-page-field': 'offset',
-        'search-page-size-field': 'limit'
-    }
-}
 
 
-def get_extensions():
+def get_extensions(portals):
     extensions = dict()
 
-    for k in PORTALS.keys():
-        portal = RemoteCKAN(PORTALS[k]['url'])
+    for k in portals.keys():
+        portal = RemoteCKAN(portals[k]['url'])
 
         r = portal.action.status_show()
         if r:
@@ -34,13 +28,13 @@ def get_extensions():
     return extensions
 
 
-def get_facets(name):
+def get_facets(portals, name):
     facets = dict()
 
-    for k in PORTALS.keys():
-        portal = RemoteCKAN(PORTALS[k]['url'])
+    for k in portals.keys():
+        portal = RemoteCKAN(portals[k]['url'])
 
-        facet_field = PORTALS[k].get(name, name)
+        facet_field = portals[k].get(name, name)
 
         r = portal.call_action(
             'package_search', {
@@ -53,30 +47,127 @@ def get_facets(name):
     return facets
 
 
-def get_packages(limit):
+def get_packages(portal, start=0, rows=100, limit=-1):
     if limit < 1:
         limit = float('inf')
 
-    for k in PORTALS.keys():
-        portal = RemoteCKAN(PORTALS[k]['url'])
+    ckan = RemoteCKAN(portal['url'])
+    key = portal['key']
 
-        start = 0
-        rows = 1000
+    r = ckan.action.package_search(start=start, rows=rows)
 
-        counter = count(start=1, step=1)
+    if not r:
+        return [], -1
 
-        while True:
-            r = portal.action.package_search(start=start, rows=rows)
+    results_count = r['count']
+    start = start + rows
 
-            if not r:
-                break
+    if start >= results_count or start >= limit:
+        start = -1
 
-            for package in r['results']:
-                package['_portal'] = k
-                yield package
+    for package in r['results']:
+        package['_portal'] = key
 
-            results_count = r['count']
-            start = next(counter) * rows
+    return r['results'], start
 
-            if start >= results_count or start >= limit:
-                break
+
+def get_resources(package):
+    assert package is not None
+
+    resources = package['resources']
+
+    with PoolExecutor() as executor:
+        for resource in executor.map(get_resource, repeat(package), resources):
+            yield resource
+
+
+def get_resource(package, resource):
+    resource['_portal'] = package['_portal']
+    resource['organisation'] = package.get('organization', '')
+    resource['theme'] = package.get('theme-primary', '')
+    resource['tags'] = get_package_tags(package)
+
+    if package.get('isopen', False) and resource.get(
+            'format').lower() == 'csv':
+        resource.update(get_resource_data(resource.get('url')))
+
+    return resource
+
+
+def get_package_tags(package):
+    assert package is not None
+
+    return ', '.join([t['display_name'] for t in package.get('tags')])
+
+
+def get_resource_data(url):
+    assert url is not None
+
+    data = defaultdict()
+
+    try:
+        df = pd.read_csv(url)
+
+        data['_headers'] = get_headers(df)
+        data['_max'] = str(get_max_date(df))
+        data['_min'] = str(get_min_date(df))
+    except (
+        ConnectionResetError, UnicodeDecodeError, UnicodeEncodeError,
+        http.client.InvalidURL, pd.errors.EmptyDataError,
+        pd.errors.ParserError, socket.gaierror, urllib.error.HTTPError,
+        urllib.error.URLError
+    ) as e:
+        data['_error_message'] = str(e)
+        data['_error_url'] = url
+
+    return data
+
+
+def get_headers(df):
+    assert df is not None
+
+    return ', '.join(df.columns)
+
+
+def get_max_date(df):
+    assert df is not None
+
+    df = get_datetime_columns(df)
+
+    if len(df.columns) == 0:
+        return None
+
+    timestamp = df.max(axis=0).max()
+
+    return timestamp.date()
+
+
+def get_datetime_columns(df):
+    assert df is not None
+
+    df = convert_columns_to_datetime(df)
+
+    return df.select_dtypes(include=['datetime64'])
+
+
+def convert_columns_to_datetime(df):
+    assert df is not None
+
+    return df.apply(
+        lambda col: pd.to_datetime(
+            col, errors='ignore', infer_datetime_format=True)
+        if col.dtypes == object else col, axis=0
+    )
+
+
+def get_min_date(df):
+    assert df is not None
+
+    df = get_datetime_columns(df)
+
+    if len(df.columns) == 0:
+        return None
+
+    timestamp = df.min(axis=0).min()
+
+    return timestamp.date()
