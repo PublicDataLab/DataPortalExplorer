@@ -4,14 +4,16 @@
 """Tests for `data_portal_explorer` package."""
 
 
+import configparser
 import json
 import unittest
-
 from datetime import date
+
 from click.testing import CliRunner
 
 import pandas as pd
 from data_portal_explorer import cli
+from data_portal_explorer.cli import get_namespace, get_portals, get_workers
 from data_portal_explorer.data_portal_explorer import (
     convert_columns_to_datetime, get_datetime_columns, get_headers,
     get_max_date, get_min_date, get_resources
@@ -37,18 +39,51 @@ class TestData_portal_explorer(unittest.TestCase):
             'CCC': [100, 50, -30]
         })
 
+        self.config = configparser.ConfigParser()
+        self.config.read('tests/config.ini')
+
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
     def test_command_line_interface(self):
         """Test the CLI."""
         runner = CliRunner()
+
         result = runner.invoke(cli.cli)
-        assert result.exit_code == 0
-        assert 'data_portal_explorer' in result.output
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn('data_portal_explorer', result.output)
+
         help_result = runner.invoke(cli.cli, ['--help'])
-        assert help_result.exit_code == 0
-        assert '--help' in help_result.output
+        self.assertEqual(help_result.exit_code, 0)
+        self.assertIn('--help', help_result.output)
+
+        invalid_config = runner.invoke(
+            cli.cli, ['tests/invalid_config.ini', 'out', 'extensions'])
+        self.assertEqual(-1, invalid_config.exit_code)
+        self.assertIn('Failed to parse config file', invalid_config.output)
+
+    def test_get_portals(self):
+        portals = get_portals(self.config)
+        self.assertIsNotNone(portals)
+        self.assertIn('example.portal.section', portals)
+
+        with self.assertRaises(configparser.Error):
+            self.config.read('tests/invalid_config.ini')
+            get_portals(self.config)
+
+    def test_get_namespace(self):
+        self.assertEqual('dpe', get_namespace(self.config))
+
+        with self.assertRaises(configparser.Error):
+            self.config.read('tests/invalid_config.ini')
+            get_namespace(self.config)
+
+    def test_get_workers(self):
+        self.assertEqual('', get_workers(self.config))
+
+        with self.assertRaises(configparser.Error):
+            self.config.read('tests/invalid_config.ini')
+            get_workers(self.config)
 
     def test_get_resources(self):
         self.assertEqual(3, len(list(get_resources(self.packages[0]))))

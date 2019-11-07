@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Console script for data_portal_explorer."""
+import configparser
 import json
 import os
 import sys
@@ -22,26 +23,38 @@ PORTALS = {
     'data.gov.uk': {
         'key': 'data.gov.uk',
         'url': 'https://ckan.publishing.service.gov.uk/',
-        'themes': 'theme-primary',
-        'search-page-field': 'offset',
-        'search-page-size-field': 'limit'
+        'themes': 'theme-primary'
     }
 }
 
 
 @click.group(chain=True)
+@click.argument('config', nargs=1, required=True, type=click.File('r'))
 @click.argument('dest', nargs=1, required=True,
                 type=click.Path(file_okay=False, resolve_path=True))
 @click.option('--format', 'fmt', default='json', show_default=True,
               type=click.Choice(['csv', 'json']))
 @click.pass_context
-def cli(ctx, fmt, dest):
+def cli(ctx, config, dest, fmt):
     """Console script for data_portal_explorer."""
     click.echo('Data Portal Explorer')
 
     ctx.ensure_object(dict)
-    ctx.obj['FORMAT'] = fmt
+
+    try:
+        parser = configparser.ConfigParser()
+        parser.read_file(config)
+
+        ctx.obj['PORTALS'] = get_portals(parser)
+        ctx.obj['NAMESPACE'] = get_namespace(parser)
+        ctx.obj['WORKERS'] = get_workers(parser)
+    except configparser.Error as e:
+        click.secho(
+            'Failed to parse config file: {}'.format(e.message), fg='red')
+        ctx.exit(code=-1)
+
     ctx.obj['DEST'] = dest
+    ctx.obj['FORMAT'] = fmt
 
     try:
         os.makedirs(dest)
@@ -49,12 +62,32 @@ def cli(ctx, fmt, dest):
         pass
 
 
+def get_portals(config):
+    active_portals = config.get('portals', 'active').split()
+
+    return {
+        key: {
+            'id': key,
+            'themes': config.get(key, 'themes'),
+            'url': config.get(key, 'url')
+        } for key in active_portals
+    }
+
+
+def get_namespace(config):
+    return config.get(config.default_section, 'namespace')
+
+
+def get_workers(config):
+    return config.get(config.default_section, 'workers')
+
+
 @cli.command()
 @click.pass_context
 def extensions(ctx):
     """Gets the available extensions."""
     click.echo('- Getting extensions')
-    data = get_extensions(PORTALS)
+    data = get_extensions(ctx.obj['PORTALS'])
 
     _save(ctx, 'extensions', data)
 
@@ -66,7 +99,7 @@ def tags(ctx):
     click.echo('- Getting tags')
 
     name = 'tags'
-    data = get_facets(PORTALS, name)
+    data = get_facets(ctx.obj['PORTALS'], name)
 
     _save(ctx, name, data)
 
@@ -78,7 +111,7 @@ def themes(ctx):
     click.echo('- Getting themes')
 
     name = 'themes'
-    data = get_facets(PORTALS, name)
+    data = get_facets(ctx.obj['PORTALS'], name)
 
     _save(ctx, name, data)
 
@@ -92,12 +125,14 @@ def packages(ctx, start, rows, limit):
     """Gets packages."""
     click.echo('- Getting packages')
 
+    portals = ctx.obj['PORTALS']
+
     data = []
 
-    for k in PORTALS.keys():
+    for k in portals.keys():
         click.echo('. {} '.format(k), nl=False)
 
-        portal = PORTALS[k]
+        portal = portals[k]
         start = 0
 
         while start >= 0:

@@ -11,19 +11,23 @@ from functools import partial
 
 import pandas as pd
 from ckanapi import RemoteCKAN
+from ckanapi.errors import CKANAPIError
 
 
 def get_extensions(portals):
     extensions = dict()
 
     for k in portals.keys():
-        portal = RemoteCKAN(portals[k]['url'])
+        try:
+            portal = RemoteCKAN(portals[k]['url'])
 
-        r = portal.action.status_show()
-        if r:
-            extensions[k] = {
-                name: 1 for name in r['extensions']
-            }
+            r = portal.action.status_show()
+            if r:
+                extensions[k] = {
+                    name: 1 for name in r['extensions']
+                }
+        except CKANAPIError:
+            pass
 
     return extensions
 
@@ -32,17 +36,21 @@ def get_facets(portals, name):
     facets = dict()
 
     for k in portals.keys():
-        portal = RemoteCKAN(portals[k]['url'])
+        try:
+            portal = RemoteCKAN(portals[k]['url'])
 
-        facet_field = portals[k].get(name, name)
+            facet_field = portals[k].get(name, name)
 
-        r = portal.call_action(
-            'package_search', {
-                'facet.field': '["{}"]'.format(facet_field), 'facet.limit': -1
-            })
-        if r:
-            data = r['facets'][facet_field]
-            facets[k] = dict(sorted(data.items(), key=lambda t: t[0].lower()))
+            r = portal.call_action(
+                'package_search', {
+                    'facet.field': '["{}"]'.format(facet_field), 'facet.limit': -1
+                })
+            if r:
+                data = r['facets'][facet_field]
+                facets[k] = dict(
+                    sorted(data.items(), key=lambda t: t[0].lower()))
+        except CKANAPIError:
+            pass
 
     return facets
 
@@ -51,10 +59,11 @@ def get_packages(portal, start=0, rows=100, limit=-1):
     if limit < 1:
         limit = float('inf')
 
-    ckan = RemoteCKAN(portal['url'])
-    key = portal['key']
-
-    r = ckan.action.package_search(start=start, rows=rows)
+    try:
+        ckan = RemoteCKAN(portal['url'])
+        r = ckan.action.package_search(start=start, rows=rows)
+    except CKANAPIError:
+        return [], -1
 
     if not r:
         return [], -1
@@ -64,6 +73,8 @@ def get_packages(portal, start=0, rows=100, limit=-1):
 
     if start >= results_count or start >= limit:
         start = -1
+
+    key = portal['id']
 
     for package in r['results']:
         package['_portal'] = key
