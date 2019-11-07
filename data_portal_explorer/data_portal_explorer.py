@@ -7,7 +7,7 @@ import socket
 import urllib
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor as PoolExecutor
-from itertools import repeat
+from functools import partial
 
 import pandas as pd
 from ckanapi import RemoteCKAN
@@ -76,8 +76,9 @@ def get_resources(package):
 
     resources = package['resources']
 
+    f = partial(get_resource, package)
     with PoolExecutor() as executor:
-        for resource in executor.map(get_resource, repeat(package), resources):
+        for resource in executor.map(f, resources):
             yield resource
 
 
