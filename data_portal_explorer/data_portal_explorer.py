@@ -100,7 +100,7 @@ def get_resource(package, namespace, resource):
     resource['tags'] = get_package_tags(package)
 
     if package.get('isopen', False) and resource.get(
-            'format').lower() == 'csv':
+            'format').lower() == 'csv' and resource.get('url'):
         resource.update(get_resource_data(resource.get('url'), namespace))
 
     return resource
