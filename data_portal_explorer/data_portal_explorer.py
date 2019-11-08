@@ -43,7 +43,7 @@ def get_facets(portals, name):
 
             r = portal.call_action(
                 'package_search', {
-                    'facet.field': '["{}"]'.format(facet_field), 'facet.limit': -1
+                    'facet.field': f'["{facet_field}"]', 'facet.limit': -1
                 })
             if r:
                 data = r['facets'][facet_field]
@@ -55,7 +55,7 @@ def get_facets(portals, name):
     return facets
 
 
-def get_packages(portal, start=0, rows=100, limit=-1):
+def get_packages(portal, namespace, start=0, rows=100, limit=-1):
     if limit < 1:
         limit = float('inf')
 
@@ -77,31 +77,31 @@ def get_packages(portal, start=0, rows=100, limit=-1):
     key = portal['id']
 
     for package in r['results']:
-        package['_portal'] = key
+        package[f'{namespace}:portal'] = key
 
     return r['results'], start
 
 
-def get_resources(package):
+def get_resources(package, namespace):
     assert package is not None
 
     resources = package['resources']
 
-    f = partial(get_resource, package)
+    f = partial(get_resource, package, namespace)
     with PoolExecutor() as executor:
         for resource in executor.map(f, resources):
             yield resource
 
 
-def get_resource(package, resource):
-    resource['_portal'] = package['_portal']
+def get_resource(package, namespace, resource):
+    resource[f'{namespace}:portal'] = package[f'{namespace}:portal']
     resource['organisation'] = package.get('organization', '')
     resource['theme'] = package.get('theme-primary', '')
     resource['tags'] = get_package_tags(package)
 
     if package.get('isopen', False) and resource.get(
             'format').lower() == 'csv':
-        resource.update(get_resource_data(resource.get('url')))
+        resource.update(get_resource_data(resource.get('url'), namespace))
 
     return resource
 
@@ -112,7 +112,7 @@ def get_package_tags(package):
     return ', '.join([t['display_name'] for t in package.get('tags')])
 
 
-def get_resource_data(url):
+def get_resource_data(url, namespace):
     assert url is not None
 
     data = defaultdict()
@@ -120,9 +120,9 @@ def get_resource_data(url):
     try:
         df = pd.read_csv(url)
 
-        data['_headers'] = get_headers(df)
-        data['_max'] = str(get_max_date(df))
-        data['_min'] = str(get_min_date(df))
+        data[f'{namespace}:headers'] = get_headers(df)
+        data[f'{namespace}:max_date'] = str(get_max_date(df))
+        data[f'{namespace}:min_date'] = str(get_min_date(df))
     except (
         ConnectionResetError, UnicodeDecodeError, UnicodeEncodeError,
         http.client.InvalidURL, pd.errors.EmptyDataError,

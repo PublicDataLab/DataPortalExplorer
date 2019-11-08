@@ -1,6 +1,6 @@
 [
     {
-        "_portal": "data.kdl.kcl.ac.uk",
+        "pde:portal": "data.kdl.kcl.ac.uk",
         "author": "Department of Digital Humanities",
         "author_email": "",
         "creator_user_id": "2df96ce0-32c8-4c41-95d3-6b9149675e4a",
@@ -139,7 +139,7 @@
         "version": "2018-03-14"
     },
     {
-        "_portal": "data.kdl.kcl.ac.uk",
+        "pde:portal": "data.kdl.kcl.ac.uk",
         "author": "Department of Digital Humanities",
         "author_email": "",
         "creator_user_id": "4e3df066-ebeb-4636-9591-d0fe9d89135b",

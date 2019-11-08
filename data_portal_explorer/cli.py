@@ -49,8 +49,7 @@ def cli(ctx, config, dest, fmt):
         ctx.obj['NAMESPACE'] = get_namespace(parser)
         ctx.obj['WORKERS'] = get_workers(parser)
     except configparser.Error as e:
-        click.secho(
-            'Failed to parse config file: {}'.format(e.message), fg='red')
+        click.secho(f'Failed to parse config file: {e.message}', fg='red')
         ctx.exit(code=-1)
 
     ctx.obj['DEST'] = dest
@@ -126,18 +125,19 @@ def packages(ctx, start, rows, limit):
     click.echo('- Getting packages')
 
     portals = ctx.obj['PORTALS']
+    ns = ctx.obj['NAMESPACE']
 
     data = []
 
     for k in portals.keys():
-        click.echo('. {} '.format(k), nl=False)
+        click.echo(f'. {k} ', nl=False)
 
         portal = portals[k]
         start = 0
 
         while start >= 0:
             click.echo('.', nl=False)
-            portal_data, start = get_packages(portal, start, rows, limit)
+            portal_data, start = get_packages(portal, ns, start, rows, limit)
             data += portal_data
 
         click.echo()
@@ -154,17 +154,18 @@ def resources(ctx, packages_json):
 
     data = []
     packages = json.load(packages_json)
+    ns = ctx.obj['NAMESPACE']
 
     with click.progressbar(packages) as bar:
         for package in bar:
-            data += get_resources(package)
+            data += get_resources(package, ns)
             _save(ctx, 'resources', list(data), normalise=True)
 
 
 def _save(ctx, filename, data, normalise=False):
     dst_path = os.path.join(ctx.obj['DEST'], filename)
 
-    with open('{}.json'.format(dst_path), 'w') as f:
+    with open(f'{dst_path}.json', 'w') as f:
         json.dump(data, f, indent=4, sort_keys=True)
         f.write('\n')
         f.close()
@@ -172,7 +173,7 @@ def _save(ctx, filename, data, normalise=False):
     if ctx.obj['FORMAT'] == 'csv':
         df = json_normalize(data) if normalise else pd.read_json(f.name)
         df.index.name = filename
-        df.to_csv('{}.csv'.format(dst_path))
+        df.to_csv(f'{dst_path}.csv')
 
 
 if __name__ == '__main__':

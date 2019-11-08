@@ -86,11 +86,11 @@ class TestData_portal_explorer(unittest.TestCase):
             get_workers(self.config)
 
     def test_get_resources(self):
-        self.assertEqual(3, len(list(get_resources(self.packages[0]))))
-        self.assertEqual(0, len(list(get_resources(self.packages[1]))))
+        self.assertEqual(3, len(list(get_resources(self.packages[0], 'pde'))))
+        self.assertEqual(0, len(list(get_resources(self.packages[1], 'pde'))))
 
         with self.assertRaises(AssertionError):
-            get_resources(None)
+            get_resources(None, None)
 
     def test_get_headers(self):
         expected_headers = 'AAA, BBB, CCC'
