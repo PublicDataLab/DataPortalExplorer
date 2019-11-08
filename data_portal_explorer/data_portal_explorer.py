@@ -19,7 +19,7 @@ def get_extensions(portals):
 
     for k in portals.keys():
         try:
-            portal = RemoteCKAN(portals[k]['url'])
+            portal = RemoteCKAN(portals[k]['url'], get_only=True)
 
             r = portal.action.status_show()
             if r:
@@ -37,7 +37,7 @@ def get_facets(portals, name):
 
     for k in portals.keys():
         try:
-            portal = RemoteCKAN(portals[k]['url'])
+            portal = RemoteCKAN(portals[k]['url'], get_only=True)
 
             facet_field = portals[k].get(name, name)
 
@@ -45,7 +45,7 @@ def get_facets(portals, name):
                 'package_search', {
                     'facet.field': f'["{facet_field}"]', 'facet.limit': -1
                 })
-            if r:
+            if r and facet_field in r['facets']:
                 data = r['facets'][facet_field]
                 facets[k] = dict(
                     sorted(data.items(), key=lambda t: t[0].lower()))
