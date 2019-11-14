@@ -7,52 +7,43 @@ import socket
 import urllib
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor as PoolExecutor
-from functools import partial
+from functools import lru_cache, partial
 
 import pandas as pd
 from ckanapi import RemoteCKAN
 from ckanapi.errors import CKANAPIError
 
 
-def get_extensions(portals):
-    extensions = dict()
+def get_extensions(portal):
+    ckan = get_remote_ckan(portal['url'], get_only=True)
 
-    for k in portals.keys():
-        try:
-            portal = RemoteCKAN(portals[k]['url'], get_only=True)
+    r = ckan.action.status_show()
+    if r:
+        return {
+            name: 1 for name in r['extensions']
+        }
 
-            r = portal.action.status_show()
-            if r:
-                extensions[k] = {
-                    name: 1 for name in r['extensions']
-                }
-        except CKANAPIError:
-            pass
-
-    return extensions
+    return {}
 
 
-def get_facets(portals, name):
-    facets = dict()
+@lru_cache(maxsize=64)
+def get_remote_ckan(portal_url, get_only=False):
+    return RemoteCKAN(portal_url, get_only=True)
 
-    for k in portals.keys():
-        try:
-            portal = RemoteCKAN(portals[k]['url'], get_only=True)
 
-            facet_field = portals[k].get(name, name)
+def get_facets(name, portal):
+    facet_field = portal.get(name, name)
+    ckan = get_remote_ckan(portal['url'], get_only=True)
 
-            r = portal.call_action(
-                'package_search', {
-                    'facet.field': f'["{facet_field}"]', 'facet.limit': -1
-                })
-            if r and facet_field in r['facets']:
-                data = r['facets'][facet_field]
-                facets[k] = dict(
-                    sorted(data.items(), key=lambda t: t[0].lower()))
-        except CKANAPIError:
-            pass
+    r = ckan.call_action('package_search', {
+        'facet.field': f'["{facet_field}"]', 'facet.limit': -1
+    })
 
-    return facets
+    if r and facet_field in r['facets']:
+        data = r['facets'][facet_field]
+        return dict(sorted(data.items(), key=lambda t: t[0].lower()))
+
+    return {}
 
 
 def get_packages(portal, namespace, start=0, rows=100, limit=-1):
@@ -121,6 +112,8 @@ def get_resource_data(url, namespace):
         df = pd.read_csv(url)
 
         data[f'{namespace}:headers'] = get_headers(df)
+
+        df = get_datetime_columns(df)
         data[f'{namespace}:max_date'] = str(get_max_date(df))
         data[f'{namespace}:min_date'] = str(get_min_date(df))
     except (
@@ -129,8 +122,8 @@ def get_resource_data(url, namespace):
         pd.errors.ParserError, socket.gaierror, urllib.error.HTTPError,
         urllib.error.URLError
     ) as e:
-        data['_error_message'] = str(e)
-        data['_error_url'] = url
+        data[f'{namespace}:error_message'] = str(e)
+        data[f'{namespace}:error_url'] = url
 
     return data
 
@@ -143,8 +136,6 @@ def get_headers(df):
 
 def get_max_date(df):
     assert df is not None
-
-    df = get_datetime_columns(df)
 
     if len(df.columns) == 0:
         return None
@@ -174,8 +165,6 @@ def convert_columns_to_datetime(df):
 
 def get_min_date(df):
     assert df is not None
-
-    df = get_datetime_columns(df)
 
     if len(df.columns) == 0:
         return None
