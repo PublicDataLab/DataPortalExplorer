@@ -46,31 +46,26 @@ def get_facets(name, portal):
     return {}
 
 
-def get_packages(portal, namespace, start=0, rows=100, limit=-1):
-    if limit < 1:
-        limit = float('inf')
-
+def get_number_of_packages(portal):
     try:
         ckan = RemoteCKAN(portal['url'])
-        r = ckan.action.package_search(start=start, rows=rows)
+        r = ckan.action.package_search(rows=0)
+
+        return r['count']
     except CKANAPIError:
-        return [], -1
+        return - 1
 
-    if not r:
-        return [], -1
+    return 0
 
-    results_count = r['count']
-    start = start + rows
 
-    if start >= results_count or start >= limit:
-        start = -1
-
-    key = portal['id']
+def get_packages(start, rows, namespace, portal):
+    ckan = RemoteCKAN(portal['url'])
+    r = ckan.action.package_search(start=start, rows=rows)
 
     for package in r['results']:
-        package[f'{namespace}:portal'] = key
+        package[f'{namespace}:portal'] = portal['id']
 
-    return r['results'], start
+    return r['results']
 
 
 def get_resources(package, namespace):

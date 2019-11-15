@@ -5,23 +5,28 @@ import configparser
 import json
 import os
 import sys
+from concurrent import futures
+from functools import partial
 
 import click
 
 import pandas as pd
+from ckanapi.errors import CKANAPIError
 from data_portal_explorer.data_portal_explorer import (
-    get_extensions, get_facets, get_packages, get_resources
+    get_extensions, get_facets, get_number_of_packages, get_packages,
+    get_resources
 )
 from pandas.io.json import json_normalize
+from tqdm import tqdm
 
 PORTALS = {
     'data.kdl.kcl.ac.uk': {
-        'key': 'data.kdl.kcl.ac.uk',
+        'id': 'data.kdl.kcl.ac.uk',
         'url': 'https://data.kdl.kcl.ac.uk/',
         'themes': 'theme-primary'
     },
     'data.gov.uk': {
-        'key': 'data.gov.uk',
+        'id': 'data.gov.uk',
         'url': 'https://ckan.publishing.service.gov.uk/',
         'themes': 'theme-primary'
     }
@@ -64,13 +69,13 @@ def cli(ctx, config, dest, fmt):
 def get_portals(config):
     active_portals = config.get('portals', 'active').split()
 
-    return {
-        key: {
+    return [
+        {
             'id': key,
             'themes': config.get(key, 'themes'),
             'url': config.get(key, 'url')
         } for key in active_portals
-    }
+    ]
 
 
 def get_namespace(config):
@@ -78,7 +83,10 @@ def get_namespace(config):
 
 
 def get_workers(config):
-    return config.get(config.default_section, 'workers')
+    try:
+        return config.getint(config.default_section, 'workers')
+    except ValueError:
+        return None
 
 
 @cli.command()
@@ -86,9 +94,33 @@ def get_workers(config):
 def extensions(ctx):
     """Gets the available extensions."""
     click.echo('- Getting extensions')
-    data = get_extensions(ctx.obj['PORTALS'])
+    handle_command(ctx, 'extensions', get_extensions)
 
-    _save(ctx, 'extensions', data)
+
+def handle_command(ctx, name, func, *args):
+    data = {}
+
+    func = partial(func, *args)
+
+    portals = ctx.obj['PORTALS']
+
+    with futures.ThreadPoolExecutor(
+            max_workers=ctx.obj['WORKERS']) as executor:
+        future_to_portal = {
+            executor.submit(func, portal): portal for portal in portals
+        }
+        for future in tqdm(futures.as_completed(future_to_portal),
+                           total=len(future_to_portal.keys())):
+            portal = future_to_portal[future]
+            portal_id = portal['id']
+
+            try:
+                data[portal_id] = future.result()
+            except CKANAPIError as e:
+                click.secho(
+                    f' !error: get {name} for {portal_id}: {e}', fg='yellow')
+
+    _save(ctx, name, data)
 
 
 @cli.command()
@@ -98,9 +130,7 @@ def tags(ctx):
     click.echo('- Getting tags')
 
     name = 'tags'
-    data = get_facets(ctx.obj['PORTALS'], name)
-
-    _save(ctx, name, data)
+    handle_command(ctx, name, get_facets, name)
 
 
 @cli.command()
@@ -110,38 +140,83 @@ def themes(ctx):
     click.echo('- Getting themes')
 
     name = 'themes'
-    data = get_facets(ctx.obj['PORTALS'], name)
-
-    _save(ctx, name, data)
+    handle_command(ctx, name, get_facets, name)
 
 
 @cli.command()
-@click.option('--start', default=0, show_default=True, type=click.INT)
-@click.option('--rows', default=20, show_default=True, type=click.INT)
+@click.option('--rows', default=100, show_default=True, type=click.INT)
 @click.option('--limit', default=0, show_default=True, type=click.INT)
 @click.pass_context
-def packages(ctx, start, rows, limit):
+def packages(ctx, rows, limit):
     """Gets packages."""
     click.echo('- Getting packages')
 
     portals = ctx.obj['PORTALS']
+    workers = ctx.obj['WORKERS']
     ns = ctx.obj['NAMESPACE']
+
+    click.echo(' . preparing package requests')
+
+    requests = get_packages_requests(portals, workers, ns, rows, limit)
+    if not requests:
+        click.secho(' ! failed to get packages requests')
+        ctx.exit(code=-1)
 
     data = []
 
-    for k in portals.keys():
-        click.echo(f'. {k} ', nl=False)
+    click.echo(' . getting packages')
 
-        portal = portals[k]
-        start = 0
+    with futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_request = {
+            executor.submit(get_packages, *request):
+            request for request in requests
+        }
+        for future in tqdm(futures.as_completed(future_to_request),
+                           total=len(future_to_request.keys())):
+            request = future_to_request[future]
 
-        while start >= 0:
-            click.echo('.', nl=False)
-            portal_data, start = get_packages(portal, ns, start, rows, limit)
-            data += portal_data
+            try:
+                data.extend(future.result())
+                _save(ctx, 'packages', data, normalise=True)
+            except CKANAPIError as e:
+                click.secho(
+                    f' ! error: get packages for {request}: {e}',
+                    fg='yellow')
 
-        click.echo()
-        _save(ctx, 'packages', data, normalise=True)
+    _save(ctx, 'packages', data, normalise=True)
+
+
+def get_packages_requests(portals, workers, namespace, rows, limit):
+    requests = []
+
+    with futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_portal = {
+            executor.submit(get_number_of_packages, portal):
+            portal for portal in portals
+        }
+        for future in tqdm(futures.as_completed(future_to_portal),
+                           total=len(future_to_portal.keys())):
+            portal = future_to_portal[future]
+            portal_id = portal['id']
+
+            try:
+                n = future.result()
+
+                if limit > 0:
+                    n = min(n, limit)
+
+                start = 0
+                number_of_requests = max(int(n / rows), 1)
+
+                for i in range(number_of_requests):
+                    requests.append([start, rows, namespace, portal])
+                    start += rows
+            except CKANAPIError as e:
+                click.secho(
+                    f' ! error: get number of packages for {portal_id}: {e}',
+                    fg='yellow')
+
+    return requests
 
 
 @cli.command()
@@ -158,7 +233,7 @@ def resources(ctx, packages_json):
 
     with click.progressbar(packages) as bar:
         for package in bar:
-            data += get_resources(package, ns)
+            data.extend(get_resources(package, ns))
             _save(ctx, 'resources', list(data), normalise=True)
 
 
