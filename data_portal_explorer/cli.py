@@ -5,8 +5,8 @@ import configparser
 import json
 import os
 import sys
+import warnings
 from concurrent import futures
-from functools import partial
 
 import click
 
@@ -14,7 +14,7 @@ import pandas as pd
 from ckanapi.errors import CKANAPIError
 from data_portal_explorer.data_portal_explorer import (
     get_extensions, get_facets, get_number_of_packages, get_packages,
-    get_resources
+    get_resource
 )
 from pandas.io.json import json_normalize
 from tqdm import tqdm
@@ -175,7 +175,6 @@ def packages(ctx, rows, limit):
 
             try:
                 data.extend(future.result())
-                # _save(ctx, 'packages', data, normalise=True)
             except (CKANAPIError, ConnectionError) as e:
                 click.secho(
                     f' ! error: get packages for {request}: {e}',
@@ -225,14 +224,42 @@ def resources(ctx, packages_json):
     packages metadata."""
     click.echo('- Extracting resources metadata')
 
-    data = []
-    packages = json.load(packages_json)
-    ns = ctx.obj['NAMESPACE']
+    workers = ctx.obj['WORKERS']
+    namespace = ctx.obj['NAMESPACE']
 
-    with click.progressbar(packages) as bar:
-        for package in bar:
-            data.extend(get_resources(package, ns))
-            _save(ctx, 'resources', list(data), normalise=True)
+    packages = json.load(packages_json)
+
+    resources = []
+
+    click.echo(' . preparing resource requests')
+
+    with futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_package = {
+            executor.submit(package.get, 'resources'):
+            package for package in packages
+        }
+        for future in tqdm(futures.as_completed(future_to_package),
+                           total=len(future_to_package.keys())):
+            package = future_to_package[future]
+            result = future.result()
+
+            for resource in result:
+                resources.append([package, namespace, resource])
+
+    data = []
+
+    click.echo(' . getting resources')
+
+    with futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_resource = {
+            executor.submit(get_resource, *resource):
+            resource for resource in resources
+        }
+        for future in tqdm(futures.as_completed(future_to_resource),
+                           total=len(future_to_resource.keys())):
+            data.extend(future.result())
+
+    _save(ctx, 'resources', data, normalise=True)
 
 
 def _save(ctx, filename, data, normalise=False):
@@ -250,4 +277,7 @@ def _save(ctx, filename, data, normalise=False):
 
 
 if __name__ == '__main__':
+    if not sys.warnoptions:
+        warnings.simplefilter('ignore')
+
     sys.exit(cli())  # pragma: no cover

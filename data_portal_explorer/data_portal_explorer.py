@@ -6,8 +6,7 @@ import http
 import socket
 import urllib
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor as PoolExecutor
-from functools import lru_cache, partial
+from functools import lru_cache
 
 import pandas as pd
 from ckanapi import RemoteCKAN
@@ -62,21 +61,21 @@ def get_packages(portal, namespace, start, rows):
     ckan = get_remote_ckan(portal['url'])
     r = ckan.action.package_search(start=start, rows=rows)
 
-    for package in r['results']:
+    results = r.get('results')
+    if not results:
+        results = r.get('result')
+
+    for package in results:
         package[f'{namespace}:portal'] = portal['id']
 
-    return r['results']
+    return results
 
 
 def get_resources(package, namespace):
     assert package is not None
 
-    resources = package['resources']
-
-    f = partial(get_resource, package, namespace)
-    with PoolExecutor() as executor:
-        for resource in executor.map(f, resources):
-            yield resource
+    return [get_resource(package, namespace, resource)
+            for resource in package.get('resources')]
 
 
 def get_resource(package, namespace, resource):
@@ -112,8 +111,8 @@ def get_resource_data(url, namespace):
         data[f'{namespace}:max_date'] = str(get_max_date(df))
         data[f'{namespace}:min_date'] = str(get_min_date(df))
     except (
-        ConnectionResetError, UnicodeDecodeError, UnicodeEncodeError,
-        http.client.InvalidURL, pd.errors.EmptyDataError,
+        ConnectionResetError, FileNotFoundError, UnicodeDecodeError,
+        UnicodeEncodeError, http.client.InvalidURL, pd.errors.EmptyDataError,
         pd.errors.ParserError, socket.gaierror, urllib.error.HTTPError,
         urllib.error.URLError
     ) as e:
