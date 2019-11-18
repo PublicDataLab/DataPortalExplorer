@@ -31,7 +31,7 @@ def get_remote_ckan(portal_url, get_only=False):
     return RemoteCKAN(portal_url, get_only=True)
 
 
-def get_facets(name, portal):
+def get_facets(portal, name):
     facet_field = portal.get(name, name)
     ckan = get_remote_ckan(portal['url'], get_only=True)
 
@@ -58,8 +58,8 @@ def get_number_of_packages(portal):
     return 0
 
 
-def get_packages(start, rows, namespace, portal):
-    ckan = RemoteCKAN(portal['url'])
+def get_packages(portal, namespace, start, rows):
+    ckan = get_remote_ckan(portal['url'])
     r = ckan.action.package_search(start=start, rows=rows)
 
     for package in r['results']:
