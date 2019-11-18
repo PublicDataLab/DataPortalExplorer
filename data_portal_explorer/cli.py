@@ -100,14 +100,12 @@ def extensions(ctx):
 def handle_command(ctx, name, func, *args):
     data = {}
 
-    func = partial(func, *args)
-
     portals = ctx.obj['PORTALS']
 
     with futures.ThreadPoolExecutor(
             max_workers=ctx.obj['WORKERS']) as executor:
         future_to_portal = {
-            executor.submit(func, portal): portal for portal in portals
+            executor.submit(func, portal, *args): portal for portal in portals
         }
         for future in tqdm(futures.as_completed(future_to_portal),
                            total=len(future_to_portal.keys())):
@@ -177,8 +175,8 @@ def packages(ctx, rows, limit):
 
             try:
                 data.extend(future.result())
-                _save(ctx, 'packages', data, normalise=True)
-            except CKANAPIError as e:
+                # _save(ctx, 'packages', data, normalise=True)
+            except (CKANAPIError, ConnectionError) as e:
                 click.secho(
                     f' ! error: get packages for {request}: {e}',
                     fg='yellow')
@@ -209,7 +207,7 @@ def get_packages_requests(portals, workers, namespace, rows, limit):
                 number_of_requests = max(int(n / rows), 1)
 
                 for i in range(number_of_requests):
-                    requests.append([start, rows, namespace, portal])
+                    requests.append([portal, namespace, start, rows])
                     start += rows
             except CKANAPIError as e:
                 click.secho(
