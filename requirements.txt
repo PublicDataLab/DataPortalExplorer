@@ -1,3 +1,4 @@
 ckanapi
 click
 pandas
+tqdm
