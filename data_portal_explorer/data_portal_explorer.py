@@ -67,6 +67,7 @@ def get_packages(portal, namespace, start, rows):
 
     for package in results:
         package[f'{namespace}:portal'] = portal['id']
+        package[f'{namespace}:themes'] = package.get(portal['themes'])
 
     return results
 
@@ -79,10 +80,10 @@ def get_resources(package, namespace):
 
 
 def get_resource(package, namespace, resource):
+    resource[f'{namespace}:organisation'] = package.get('organization', '')
     resource[f'{namespace}:portal'] = package[f'{namespace}:portal']
-    resource['organisation'] = package.get('organization', '')
-    resource['theme'] = package.get('theme-primary', '')
-    resource['tags'] = get_package_tags(package)
+    resource[f'{namespace}:tags'] = get_package_tags(package)
+    resource[f'{namespace}:themes'] = package.get(f'{namespace}:themes', '')
 
     if package.get('isopen', False) and resource.get(
             'format').lower() == 'csv' and resource.get('url'):
