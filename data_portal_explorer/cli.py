@@ -253,13 +253,16 @@ def resources(ctx, packages_json):
     with futures.ThreadPoolExecutor(max_workers=workers) as executor:
         future_to_resource = {
             executor.submit(get_resource, *resource):
-            resource for resource in resources
+            resource for resource in resources[:1000]
         }
-        for future in tqdm(futures.as_completed(future_to_resource),
-                           total=len(future_to_resource.keys())):
-            data.extend(future.result())
-
-    _save(ctx, 'resources', data, normalise=True)
+        try:
+            for future in tqdm(futures.as_completed(future_to_resource),
+                               total=len(future_to_resource.keys())):
+                data.append(future.result())
+        except KeyboardInterrupt:
+            pass
+        finally:
+            _save(ctx, 'resources', data, normalise=True)
 
 
 def _save(ctx, filename, data, normalise=False):
