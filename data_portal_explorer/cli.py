@@ -3,11 +3,13 @@
 """Console script for data_portal_explorer."""
 import configparser
 import json
+import logging
 import os
 import random
 import sys
 import warnings
 from concurrent import futures
+from logging.config import fileConfig
 
 import click
 
@@ -65,6 +67,10 @@ def cli(ctx, config, dest, fmt):
         os.makedirs(dest)
     except FileExistsError:
         pass
+
+    fileConfig(parser.get('DEFAULT', 'logging'))
+    logger = logging.getLogger()
+    logger.info('logger initialised')
 
 
 def get_portals(config):
@@ -165,6 +171,9 @@ def packages(ctx, rows, limit):
 
     click.echo(' . getting packages')
 
+    logger = logging.getLogger()
+    logger.info('packages')
+
     with futures.ThreadPoolExecutor(max_workers=workers) as executor:
         future_to_request = {
             executor.submit(get_packages, *request):
@@ -252,6 +261,9 @@ def resources(ctx, packages_json):
     data = []
 
     click.echo(' . getting resources')
+
+    logger = logging.getLogger()
+    logger.info('resources')
 
     with futures.ThreadPoolExecutor(max_workers=workers) as executor:
         future_to_resource = {

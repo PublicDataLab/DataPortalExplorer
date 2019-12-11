@@ -3,6 +3,7 @@
 """Main module."""
 
 import http
+import logging
 import socket
 import urllib
 from collections import defaultdict
@@ -11,6 +12,8 @@ from functools import lru_cache
 import pandas as pd
 from ckanapi import RemoteCKAN
 from ckanapi.errors import CKANAPIError
+
+logger = logging.getLogger()
 
 
 def get_extensions(portal):
@@ -58,7 +61,11 @@ def get_number_of_packages(portal):
 
 
 def get_packages(portal, namespace, start, rows):
-    ckan = get_remote_ckan(portal['url'])
+    url = portal['url']
+
+    logger.info(f'get_packages: {url}; {start}-{rows}')
+
+    ckan = get_remote_ckan(url)
     r = ckan.action.package_search(start=start, rows=rows)
 
     results = r.get('results')
@@ -88,6 +95,10 @@ def get_resource(package, namespace, resource):
     is_open = package.get('isopen', False)
     data_format = resource.get('format').lower()
     url = resource.get('url')
+
+    logger.info(
+        f'get_resource: {resource["id"]}; {data_format}; '
+        f'is_open: {is_open}; {url}')
 
     if is_open and data_format in [
             'csv', 'spreadsheet'] and not url.endswith('.zip'):
