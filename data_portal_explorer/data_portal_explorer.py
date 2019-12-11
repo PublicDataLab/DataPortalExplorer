@@ -85,9 +85,13 @@ def get_resource(package, namespace, resource):
     resource[f'{namespace}:tags'] = get_package_tags(package)
     resource[f'{namespace}:themes'] = package.get(f'{namespace}:themes', '')
 
-    if package.get('isopen', False) and resource.get(
-            'format').lower() == 'csv' and resource.get('url'):
-        resource.update(get_resource_data(resource.get('url'), namespace))
+    is_open = package.get('isopen', False)
+    data_format = resource.get('format').lower()
+    url = resource.get('url')
+
+    if is_open and data_format in [
+            'csv', 'spreadsheet'] and not url.endswith('.zip'):
+        resource.update(get_resource_data(url, data_format, namespace))
 
     return resource
 
@@ -98,13 +102,16 @@ def get_package_tags(package):
     return ', '.join([t['display_name'] for t in package.get('tags')])
 
 
-def get_resource_data(url, namespace):
+def get_resource_data(url, data_format, namespace):
     assert url is not None
 
     data = defaultdict()
 
     try:
-        df = pd.read_csv(url)
+        if data_format == 'spreadsheet':
+            df = pd.read_excel(url)
+        else:
+            df = pd.read_csv(url)
 
         data[f'{namespace}:headers'] = get_headers(df)
 
@@ -113,9 +120,9 @@ def get_resource_data(url, namespace):
         data[f'{namespace}:min_date'] = str(get_min_date(df))
     except (
         ConnectionResetError, FileNotFoundError, UnicodeDecodeError,
-        UnicodeEncodeError, http.client.InvalidURL, pd.errors.EmptyDataError,
-        pd.errors.ParserError, socket.gaierror, urllib.error.HTTPError,
-        urllib.error.URLError
+        UnicodeEncodeError, ValueError, http.client.InvalidURL,
+        pd.errors.EmptyDataError, pd.errors.ParserError, socket.gaierror,
+        urllib.error.HTTPError, urllib.error.URLError
     ) as e:
         data[f'{namespace}:error_message'] = str(e)
         data[f'{namespace}:error_url'] = url
