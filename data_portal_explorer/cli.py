@@ -4,6 +4,7 @@
 import configparser
 import json
 import os
+import random
 import sys
 import warnings
 from concurrent import futures
@@ -246,6 +247,8 @@ def resources(ctx, packages_json):
             for resource in result:
                 resources.append([package, namespace, resource])
 
+    resources = random.sample(resources, k=len(resources))
+
     data = []
 
     click.echo(' . getting resources')
@@ -253,7 +256,7 @@ def resources(ctx, packages_json):
     with futures.ThreadPoolExecutor(max_workers=workers) as executor:
         future_to_resource = {
             executor.submit(get_resource, *resource):
-            resource for resource in resources[:1000]
+            resource for resource in resources
         }
         try:
             for future in tqdm(futures.as_completed(future_to_resource),
