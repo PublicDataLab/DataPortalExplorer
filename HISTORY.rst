@@ -2,6 +2,11 @@
 History
 =======
 
+LATEST_VERSION (date)
+---
+
+* Fix setup.py URL
+
 0.1.3 (2020-01-22)
 ---
 
