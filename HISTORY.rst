@@ -2,7 +2,7 @@
 History
 =======
 
-LATEST_VERSION (date)
+0.1.4 (date)
 ---
 
 * Fix setup.py URL
