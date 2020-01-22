@@ -55,6 +55,7 @@ def cli(ctx, config, dest, fmt):
 
         ctx.obj['PORTALS'] = get_portals(parser)
         ctx.obj['NAMESPACE'] = get_namespace(parser)
+        ctx.obj['DATA_FORMATS'] = get_data_formats(parser)
         ctx.obj['WORKERS'] = get_workers(parser)
     except configparser.Error as e:
         click.secho(f'Failed to parse config file: {e.message}', fg='red')
@@ -87,6 +88,13 @@ def get_portals(config):
 
 def get_namespace(config):
     return config.get(config.default_section, 'namespace')
+
+
+def get_data_formats(config):
+    text_data_formats = config.get('data_formats', 'text').split()
+    excel_data_formats = config.get('data_formats', 'excel').split()
+
+    return {'text': text_data_formats, 'excel': excel_data_formats}
 
 
 def get_workers(config):
@@ -236,6 +244,7 @@ def resources(ctx, packages_json):
 
     workers = ctx.obj['WORKERS']
     namespace = ctx.obj['NAMESPACE']
+    data_formats = ctx.obj['DATA_FORMATS']
 
     packages = json.load(packages_json)
 
@@ -254,7 +263,7 @@ def resources(ctx, packages_json):
             result = future.result()
 
             for resource in result:
-                resources.append([package, namespace, resource])
+                resources.append([package, namespace, resource, data_formats])
 
     resources = random.sample(resources, k=len(resources))
 

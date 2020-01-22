@@ -86,7 +86,7 @@ def get_resources(package, namespace):
             for resource in package.get('resources')]
 
 
-def get_resource(package, namespace, resource):
+def get_resource(package, namespace, resource, data_formats):
     resource[f'{namespace}:organisation'] = package.get('organization', '')
     resource[f'{namespace}:portal'] = package[f'{namespace}:portal']
     resource[f'{namespace}:tags'] = get_package_tags(package)
@@ -100,9 +100,12 @@ def get_resource(package, namespace, resource):
         f'get_resource: {resource["id"]}; {data_format}; '
         f'is_open: {is_open}; {url}')
 
-    if is_open and data_format in [
-            'csv', 'spreadsheet'] and not url.endswith('.zip'):
-        resource.update(get_resource_data(url, data_format, namespace))
+    parsable_formats = data_formats['text'] + data_formats['excel']
+
+    if is_open and data_format in parsable_formats and not url.endswith(
+            '.zip'):
+        resource.update(get_resource_data(
+            url, data_format, data_formats, namespace))
 
     return resource
 
@@ -113,13 +116,13 @@ def get_package_tags(package):
     return ', '.join([t['display_name'] for t in package.get('tags')])
 
 
-def get_resource_data(url, data_format, namespace):
+def get_resource_data(url, data_format, data_formats, namespace):
     assert url is not None
 
     data = defaultdict()
 
     try:
-        if data_format == 'spreadsheet':
+        if data_format in data_formats['excel']:
             df = pd.read_excel(url)
         else:
             df = pd.read_csv(url)
