@@ -1,5 +1,3 @@
-# Config file for automatic testing at travis-ci.org
-
 language: python
 python:
     - 3.7
@@ -19,8 +17,8 @@ deploy:
     distributions: sdist bdist_wheel
     user: jmiguelv
     password:
-        secure: PLEASE_REPLACE_ME
+        secure: Qab9s1dG/CvtD+wojv+b+ZJhLTr3ppTWXLrJ3L9XfM6egxDuTNjTHcq/C51h57jkA2oAKpjxBmnNy4D+BkiTpmHivbqg9NQDIiDM3DxVnX3ohCz0sZIjRLa+xe9AwEUexdIbZIX8oi7/hFeGrk4zm8vrrgFPiH5mhmDxQnk1xdMQ0Nv5WB2WaCQNBkRQeRSoebihlnKX+XakblASRhrhLsw9yCPBZVWh1S1e7Z4DUZ+4fiCPrl8cJUJEdjVfZZMAos0fEuWXChoh77jlBfcQ4UT3bVeqkKl/Jmr62u5B5KBnf+sH4P+26no+oLOtJZTAFurLmgLsZZ3eJjsA7rRLu8Z+dFAL0+84EDLb0zsOy1tI4NojoRfyB5pMBouNPqX2xePlmAY4PdE1ECw1R54qm3T/d7k7qmOPnPIlac2qUxvEpbK1yTIBKeHDfvZICz+bfBf0vRc+gwDiHMbndnXL+rjcBd6ux4iCkypE0EzFdEp3Wn70WMhvuxKZf4ggcXUwS9qbsQCMMNxkW/0XIml62egmymm7Vuz0kPlb8CFBlriM1H+d9DK3wVtYJ32fgAUpRPkft0QbapWFehEZNVUFw+z9f1/9A4iVFRayjswIbKlfsxV/48iecblFlvkiFG2TdgAk2v16FaVGy9zf6Gw+r6a4KxXervfdKM/rsiZrzUs=
     on:
         tags: true
-        repo: PublicDataLab/DataPortalExplorer
+        repo: kingsdigitallab/DataPortalExplorer
         python: 3.7
