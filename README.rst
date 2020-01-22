@@ -2,6 +2,8 @@
 Data Portal Explorer
 ====================
 
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+    :target: https://opensource.org/licenses/MIT
 
 .. image:: https://img.shields.io/pypi/v/data_portal_explorer.svg
         :target: https://pypi.python.org/pypi/data_portal_explorer
@@ -18,27 +20,19 @@ Data Portal Explorer
      :alt: Updates
 
 
+This package contains tools to extract metadata from CKAN instances which can
+be used to study data portals as infrastructures from the perspective of
+social/cultural research.
 
-This package contains tools to extract metadata from CKAN instances which can be used to study data portals as infrastructures from the perspective of social/cultural research.
 
-
-
-* Free software: MIT license
 * Documentation: https://data-portal-explorer.readthedocs.io.
 
-
-Features
---------
-
-* TODO
-
-        #. Get metadata about resources: start with csvs; dates (min, max), headers
-        #. Export in gephy format
 
 Credits
 -------
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+This package was created with Cookiecutter_ and the
+`audreyr/cookiecutter-pypackage`_ project template.
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
