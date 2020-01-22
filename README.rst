@@ -11,7 +11,7 @@ Data Portal Explorer
 .. image:: https://travis-ci.org/kingsdigitallab/DataPortalExplorer.svg
         :target: https://travis-ci.org/kingsdigitallab/DataPortalExplorer
 
-.. image:: https://readthedocs.org/projects/data-portal-explorer/badge/?version=latest
+.. image:: https://readthedocs.org/projects/dataportalexplorer/badge/?version=latest
         :target: https://dataportalexplorer.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
