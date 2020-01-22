@@ -2,10 +2,7 @@
 
 language: python
 python:
-  - 3.6
-  - 3.5
-  - 3.4
-  - 2.7
+    - 3.7
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox-travis
@@ -18,12 +15,12 @@ script: tox
 # following command to finish PyPI deployment setup:
 # $ travis encrypt --add deploy.password
 deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: jmiguelv
-  password:
-    secure: PLEASE_REPLACE_ME
-  on:
-    tags: true
-    repo: jmiguelv/data_portal_explorer
-    python: 3.6
+    provider: pypi
+    distributions: sdist bdist_wheel
+    user: jmiguelv
+    password:
+        secure: PLEASE_REPLACE_ME
+    on:
+        tags: true
+        repo: PublicDataLab/DataPortalExplorer
+        python: 3.7
