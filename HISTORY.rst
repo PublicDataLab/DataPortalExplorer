@@ -2,7 +2,7 @@
 History
 =======
 
-LATEST_VERSION (2020-01-22)
+0.1.3 (2020-01-22)
 ---
 
 * Add command line instructions.
