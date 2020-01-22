@@ -1,0 +1,10 @@
+Sphinx
+bumpversion
+coverage
+flake8
+pip
+pip-tools
+tox
+twine
+watchdog
+wheel
