@@ -7,7 +7,7 @@
 alabaster==0.7.12         # via sphinx
 argh==0.26.2              # via watchdog
 babel==2.8.0              # via sphinx
-bleach==3.1.1             # via readme-renderer
+bleach==3.1.5             # via -r requirements_dev.in, readme-renderer
 bumpversion==0.5.3        # via -r requirements_dev.in
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
@@ -27,7 +27,7 @@ keyring==21.1.0           # via twine
 markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8
 numpy==1.18.1             # via pandas
-packaging==20.0           # via sphinx, tox
+packaging==20.0           # via bleach, sphinx, tox
 pandas==0.25.3            # via -r requirements.in
 pathtools==0.1.2          # via watchdog
 pip-tools==4.4.0          # via -r requirements_dev.in
