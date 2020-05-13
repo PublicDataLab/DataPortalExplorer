@@ -20,7 +20,7 @@ test_requirements = []
 
 setup(
     author="Kings Digital Lab",
-    author_email="jmvieira@gmail.com",
+    author_email="jmvieira@pm.me",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
