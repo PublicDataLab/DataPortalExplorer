@@ -2,6 +2,18 @@
 History
 =======
 
+[Unreleased] - yyyy-mm-dd
+--------------------
+
+Added
+~~~~~
+* Usage documentation.
+
+Changed
+~~~~~~~
+* Pin requirements.
+
+
 [0.1.5] - 2020-05-13
 --------------------
 
