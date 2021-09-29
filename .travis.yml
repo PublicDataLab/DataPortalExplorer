@@ -1,23 +1,14 @@
 language: python
 python:
     - 3.7
-
-# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox-travis
-
-# Command to run tests, e.g. python setup.py test
 script: tox
-
-# Assuming you have installed the travis-ci CLI tool, after you
-# create the Github repo and add it to Travis, run the
-# following command to finish PyPI deployment setup:
-# $ travis encrypt --add deploy.password
 deploy:
     provider: pypi
     distributions: sdist bdist_wheel
     user: jmiguelv
     password:
-        secure: gE8uAEXMWDmPoZSy+IZ0eHqX3hISpCVX7DIP3zZ2eJOGjEI1L4Gq+ZWMG/FdL4wbIoAvbuW08dSs7dxB4C3+p0RjZhgd/k2WYfN+weCczbEk37+IU2h2lDLdYOfYLsgdfrzUmTiaajts5F0zJvSLhSx7WpgX2r0dFdWrAqcNIDVooPqdx+UprbmBrhDBAH4pGJ7TfMmO5B3XB7HLFkW53MvbM8IqwRFHj8RKr760KLF2KMP40vFJSYUAMaUQZrREHIiq3twrqRLASu7u93SeU3uDlsf7JsxLblzan6hSMxaQQ0EDK1sO21ek8uqee96r31v4HmidytCUG6n+wQtp5glAVKbWSCnX+wYK2HhB4127X9EK8i84zKSOZH4LM+HYZc7YQmQ78sn863yjewnb95h5F41uhW6BY4IlApaglzSGQ+wgDvaln8tr6HrRx6ZkHPuBZl9eSvWzHavuTZ50DcXp87HCFoKlez12jAXs0PNmgpMo0efcreCbhvax6ifj96oPBccFxjR6vebj8o23N7LBTKKMeXgUc4WZ3N6fIFUhpoLcG6yJLMrfmXWxWy2kHuJqD0lSEZ1bs0+csYS943dwInt3EZXc5VxJcpBVSoOxxU3kz6tcPLoUN/A2V+eJ82Wn+tRcVNixzzJqItVOpao62oWWeOLp19o9NivfBys=
+        secure: RPfYqwjvX9oBF9JMTJR7A2DwK+D+S7qDTyn8dHcrtpZqEu24sk2z4/MYoPp0h/orRzCffXhMpDTswmTmAkQRbm1S2wqQX0G6GDZItZwoqOXqtD8q0v1Kc9EIP4AIc+pc1KFbrAUWy7IqxiHLJZxZT2hRxIyU23CSlMxGXea35ECAwZD59xSvvzIBTta0DPUUC5pyXaUulM9jiY2rwDh6iBe0SFmpuC1upaLz7HE2cGcDyr7mecE66CuGGlRaeCAtXK0wubhFmJSQpYaUFIcTeEvaPpQTyVlpSoka3BAuYiNeVl8Lz65ZBvHT8FxoN+Q+lM0y48/p0AddEZK9r6qDZP81ZFjw7ALnAC9C9tz88/rIqP1rEaUWVA2mmENBjO3jP3DLXkjoEBiX3/bzMr97uAWXAAWWQRSRqtnHdwVh3AjPlR4qqwTtbYplksERQAGtETiOf3DJPvvjm3MugMNvQoXT7TkIpe6JX5wiFrDMsffZybjXvKPOO6IYyoP+wmgDonlVVNrHtYAqUiKM0p7qOBZq+DUtDierAnhHYcLWl2wX7wDEaGv+s9e1nbAgmxvrnsxyWH+RQR8tCsnrxUXBZN+69aOTncoQAk5IuO2U1CB2ufdXuYBb2cCBZcgrQVIVtvCK20Sn4VElQF8vC1vOMAcr6ShyatSI0E8hlqrkNNI=
     on:
         tags: true
         repo: kingsdigitallab/DataPortalExplorer
