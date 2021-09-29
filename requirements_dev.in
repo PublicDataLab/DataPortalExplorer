@@ -2,7 +2,7 @@
 
 Sphinx
 bumpversion
-bleach>=3.1.4
+bleach
 coverage
 flake8
 pip
