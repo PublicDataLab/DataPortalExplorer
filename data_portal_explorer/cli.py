@@ -12,9 +12,11 @@ from concurrent import futures
 from logging.config import fileConfig
 
 import click
-
 import pandas as pd
 from ckanapi.errors import CKANAPIError
+from pandas.io.json import json_normalize
+from tqdm import tqdm
+
 from data_portal_explorer.data_portal_explorer import (
     get_extensions,
     get_facets,
@@ -22,21 +24,6 @@ from data_portal_explorer.data_portal_explorer import (
     get_packages,
     get_resource,
 )
-from pandas.io.json import json_normalize
-from tqdm import tqdm
-
-PORTALS = {
-    "data.kdl.kcl.ac.uk": {
-        "id": "data.kdl.kcl.ac.uk",
-        "url": "https://data.kdl.kcl.ac.uk/",
-        "themes": "theme-primary",
-    },
-    "data.gov.uk": {
-        "id": "data.gov.uk",
-        "url": "https://ckan.publishing.service.gov.uk/",
-        "themes": "theme-primary",
-    },
-}
 
 
 @click.group(chain=True)
