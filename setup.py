@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
     readme = readme_file.read()
@@ -33,7 +33,9 @@ setup(
     instances which can be used to study data portals as infrastructures from
     the perspective of social/cultural research.""",
     entry_points={
-        "console_scripts": ["data_portal_explorer=data_portal_explorer.cli:cli",],
+        "console_scripts": [
+            "data_portal_explorer=data_portal_explorer.cli:cli",
+        ],
     },
     install_requires=requirements,
     license="MIT license",
@@ -46,6 +48,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/kingsdigitallab/DataPortalExplorer",
-    version="version='0.2.0'",
+    version="version='0.1.6'",
     zip_safe=False,
 )
