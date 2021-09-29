@@ -5,9 +5,14 @@ History
 [Unreleased] - yyyy-mm-dd
 --------------------
 
+Added
+~~~~~
+* Usage documentation.
+
 Changed
 ~~~~~~~
 * Adopt `Keep a Changelog`_ format for this document.
+* Pin requirements.
 
 Security
 ~~~~~~~~
@@ -32,7 +37,7 @@ Added
 
 
 [0.1.1] - 2020-01-22
-------------------
+--------------------
 
 Fixed
 ~~~~~
@@ -40,6 +45,6 @@ Fixed
 
 
 [0.1.0] - 2020-01-22
-------------------
+--------------------
 
 * First release on PyPI.
