@@ -4,4 +4,4 @@
 
 __author__ = """Kings Digital Lab"""
 __email__ = "jmvieira@gmail.com"
-__version__ = "0.1.6"
+__version__ = "0.1.7"
