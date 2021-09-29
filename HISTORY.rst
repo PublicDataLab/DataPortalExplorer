@@ -5,6 +5,10 @@ History
 [Unreleased] - yyyy-mm-dd
 --------------------
 
+Fixed
+~~~~~
+* Pypi authentication.
+
 
 [0.1.6] - 2021-09-29
 --------------------
