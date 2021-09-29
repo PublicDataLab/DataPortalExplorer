@@ -2,7 +2,7 @@
 History
 =======
 
-[Unreleased] - yyyy-mm-dd
+[0.1.5] - 2020-05-13
 --------------------
 
 Added
