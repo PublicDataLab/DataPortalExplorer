@@ -4,6 +4,7 @@
 Installation
 ============
 
+Data Portal Explorer has been tested with Python versions 3.7 and above.
 
 Stable release
 --------------
