@@ -1,15 +1,15 @@
 language: python
 python:
-    - 3.7
+- 3.7
 install: pip install -U tox-travis
 script: tox
 deploy:
-    provider: pypi
-    distributions: sdist bdist_wheel
-    user: jmiguelv
-    password:
-        secure: RPfYqwjvX9oBF9JMTJR7A2DwK+D+S7qDTyn8dHcrtpZqEu24sk2z4/MYoPp0h/orRzCffXhMpDTswmTmAkQRbm1S2wqQX0G6GDZItZwoqOXqtD8q0v1Kc9EIP4AIc+pc1KFbrAUWy7IqxiHLJZxZT2hRxIyU23CSlMxGXea35ECAwZD59xSvvzIBTta0DPUUC5pyXaUulM9jiY2rwDh6iBe0SFmpuC1upaLz7HE2cGcDyr7mecE66CuGGlRaeCAtXK0wubhFmJSQpYaUFIcTeEvaPpQTyVlpSoka3BAuYiNeVl8Lz65ZBvHT8FxoN+Q+lM0y48/p0AddEZK9r6qDZP81ZFjw7ALnAC9C9tz88/rIqP1rEaUWVA2mmENBjO3jP3DLXkjoEBiX3/bzMr97uAWXAAWWQRSRqtnHdwVh3AjPlR4qqwTtbYplksERQAGtETiOf3DJPvvjm3MugMNvQoXT7TkIpe6JX5wiFrDMsffZybjXvKPOO6IYyoP+wmgDonlVVNrHtYAqUiKM0p7qOBZq+DUtDierAnhHYcLWl2wX7wDEaGv+s9e1nbAgmxvrnsxyWH+RQR8tCsnrxUXBZN+69aOTncoQAk5IuO2U1CB2ufdXuYBb2cCBZcgrQVIVtvCK20Sn4VElQF8vC1vOMAcr6ShyatSI0E8hlqrkNNI=
-    on:
-        tags: true
-        repo: kingsdigitallab/DataPortalExplorer
-        python: 3.7
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: jmiguelv
+  password:
+    secure: l61Iv7dHTHx34XHa7lfX5MyZMEkCIeaJRHILJ4wxQtDYudapEh8i59tEq+3eWQHX9mSZmzpezV9dnM7ljzrQg1XYWrKr7/j7w+7REWffbs4yrPQd1FuR/Kd7yTc275zWd6sSBgi+3sN/dBn0qNpI7SCL1K3pVKcw03QL+v6DldQGwTUQxP/pNOoxBvlItzT0Jq8BpdeO8gpzdzB8hpggLtBFkUN4zrkg7A6ClRo5NHZzrZJQd4ZKfNzRkh8GUSlIUrfqeCsYsPG9nfTQOZuc6maAtzbsasLSIufbip2btY6ErHuDo3ummlngyqzUSfTTjeUd0yL2V2kixzrkw46FNtjSIQ7niAAhPCWub3RW3sGGzZ4ZbNSXQ1F5TJt8fZNjwKEjPZVcCyNRaopyqfgLywGaU+yvCmMcWRljCnQuZ91s3/ll2Wo1vIw2ZdDSAo0bLswKvl3W2KZ09WKZOq3/k4KIUsH5s/j95XdROvYVaUPA1cDbe30xvJz2PxpBhtvA+anE52qLyVKgiUPtvN2SzX6owJ+Wy1eUKH4sxYOU2w465eqnbFN0OGcO0Coq2GzLEEkLFVS7DgOt1mu/FI2BtUOfEN/oLiCIXbz770G00rNIb7IZSaJHdBxzbH3ciGwpEfV6V288LjlnB1NOvUxlmgPEIBRPX4oEWSX6BI9hiZE=
+  on:
+    tags: true
+    repo: kingsdigitallab/DataPortalExplorer
+    python: 3.7
