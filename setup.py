@@ -3,6 +3,9 @@
 
 """The setup script."""
 
+import os
+import sys
+
 from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
@@ -17,6 +20,20 @@ with open("requirements.txt") as requirements_file:
 setup_requirements = []
 
 test_requirements = []
+
+if sys.argv[-1] == "publish":
+    try:
+        import wheel
+
+        print("Wheel version: ", wheel.__version__)
+    except ImportError:
+        print('Wheel library missing. Please run "pip install wheel"')
+        sys.exit()
+    os.system("python setup.py sdist")
+    os.system("python setup.py bdist_wheel")
+    os.system("twine upload dist/*")
+    sys.exit()
+
 
 setup(
     author="Kings Digital Lab",
@@ -48,6 +65,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/kingsdigitallab/DataPortalExplorer",
-    version="version='0.1.7'",
+    version="0.1.7",
     zip_safe=False,
 )
