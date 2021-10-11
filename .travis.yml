@@ -1,15 +1,16 @@
 language: python
 python:
-- 3.7
+    - 3.7
 install: pip install -U tox-travis
 script: tox
 deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: jmiguelv
-  password:
-    secure: IDf6ZuH27XdewkaanYZbdHcgEomVoXnGUYbSNMDNFO5bwx7pfDZD0szwSCW0tj88XwwWZEdrcGVxgeA1fs0o4oHRoY9vL2Al4dm/LA8tYaLPqsozMXpowlPpQRZDYHIYYFbrTeV+FGBEcCXVYEkexjfXpRo10GDRDEWtPNGmAzbxRsElJJBygZFsYCu5xoCaqxkWHYCyeJwvQBMi/cl09xFRM4ypZrgjdNdg1dhTWuTisyqpnJj3IsYV+fnhw8bfQatfgHQeeEA1sbjyIiDUVqyF1Ov7vt5tk1mmH3suuvoFVlo/0JxGBZPIgpYu9e/X6Cdsm6o+ve4erP3fl9LrTvoMahKWgfEU10VZwD9VRIr5Q74nB3BzUsLbZQX2Akd2OLSzF/JODV/vuOu5fKKRd8SNf6uBugh0hD6bxFe/qY9uzXWaT//RVPuPUEuBhFJD6uiLfhlqkddt0RkpyLi3qwbEWeOSTv39rUAzeRp4G8/TUar9mvtiLAzF/rEwW26h4bfRPv/hQXwyDkUjGwCtfIVsQnDe3LPigRKb95GXTmXrFJAsrUFOJID62bRvw/6NxNC3rixACa4DBOBoZBLa1le31VkpE5CtCzIsXHMjXaivtVk1TI5f1WKuhNP2uiZRHES0/ZSiLwUp+RvgHTU/xwQeMLfvfgkgmsu36rZ2QGc=
-  on:
-    tags: true
-    repo: kingsdigitallab/DataPortalExplorer
-    python: 3.7
+    provider: pypi
+    server: https://upload.pypi.org/legacy/
+    distributions: sdist bdist_wheel
+    user: __token__
+    password: $PYPI_TOKEN
+    skip_cleanup: false
+    on:
+        tags: true
+        repo: kingsdigitallab/DataPortalExplorer
+        python: 3.7
