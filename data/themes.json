@@ -1,0 +1,35 @@
+{
+    "data.gov.ie": {
+        "Agriculture": 126,
+        "Arts": 133,
+        "Crime": 93,
+        "Economy": 317,
+        "Education and Sport": 218,
+        "Energy": 95,
+        "Environment": 3412,
+        "Government": 5729,
+        "Health": 1807,
+        "Housing": 378,
+        "Science": 87,
+        "Society": 86,
+        "Towns": 37,
+        "Transport": 369
+    },
+    "data.gov.uk": {
+        "business-and-economy": 968,
+        "crime-and-justice": 627,
+        "defence": 188,
+        "digital-services-performance": 8,
+        "education": 1060,
+        "environment": 6889,
+        "government": 2440,
+        "government-reference-data": 2,
+        "government-spending": 1796,
+        "health": 1783,
+        "mapping": 2620,
+        "society": 2306,
+        "towns-and-cities": 6322,
+        "transport": 830
+    },
+    "data.london.gov.uk": {}
+}
