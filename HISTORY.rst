@@ -2,8 +2,20 @@
 History
 =======
 
-[0.1.8] - yyyy-mm-dd
+[Unreleased] - yyyy-mm-dd
 --------------------
+
+Added
+~~~~~
+* GitHub action.
+
+
+[0.1.8] - 2021-10-11
+--------------------
+
+Fixed
+~~~~~
+* Travis/Pypi authentication.
 
 
 [0.1.7] - 2021-09-29
