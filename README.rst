@@ -8,8 +8,8 @@ Data Portal Explorer
 .. image:: https://img.shields.io/pypi/v/data_portal_explorer.svg
         :target: https://pypi.python.org/pypi/data_portal_explorer
 
-.. image:: https://travis-ci.org/kingsdigitallab/DataPortalExplorer.svg
-        :target: https://travis-ci.org/kingsdigitallab/DataPortalExplorer
+.. image:: https://github.com/kingsdigitallab/DataPortalExplorer/actions/workflows/main.yml/badge.svg
+        :target: https://github.com/kingsdigitallab/DataPortalExplorer/actions/workflows/main.yml
 
 .. image:: https://readthedocs.org/projects/dataportalexplorer/badge/?version=latest
         :target: https://dataportalexplorer.readthedocs.io/en/latest/?badge=latest
