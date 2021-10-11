@@ -31,7 +31,7 @@ jobs:
                   tox
 
             - name: Build and deploy
-            - uses: casperdcl/deploy-pypi@v2
+              uses: casperdcl/deploy-pypi@v2
               with:
                   password: ${{ secrets.PYPI_TOKEN }}
                   build: true
