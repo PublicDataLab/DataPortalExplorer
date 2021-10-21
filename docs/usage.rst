@@ -47,7 +47,7 @@ to harvest data from. Before using the tool create a ``config.ini`` following th
 Then tell the tool which configuration file to use by passing the path to the tool, for
 example::
 
-    $ data_portal_explorer --format csv config.ini extensions
+    $ data_portal_explorer --format csv config.ini destination_path extensions
 
 
 Commands
@@ -64,7 +64,7 @@ repositories.
 It is possible to run multiple commands at the same time, for example to get the tags
 and themes::
 
-    $ data_portal_explorer --format csv config.ini tags themes
+    $ data_portal_explorer --format csv config.ini destination_path tags themes
 
 .. warning::
     Depending on the size of the data repositories being harvest, the ``packages`` and
@@ -77,7 +77,7 @@ Extensions
 The ``extensions`` command gets a list of the extensions/plugins installed in a data
 repository::
 
-    $ data_portal_explorer --format csv config.ini extensions
+    $ data_portal_explorer --format csv config.ini destination_path extensions
 
 Packages
 ~~~~~~~~
@@ -85,21 +85,21 @@ Packages
 The ``packages`` command gets metadata about the datasets/packages stored in a data
 repository::
 
-    $ data_portal_explorer --format csv config.ini packages
+    $ data_portal_explorer --format csv config.ini destination_path packages
 
 Tags
 ~~~~
 
 The ``tags`` command gets a list of the tags used to classify the datasets/packages::
 
-    $ data_portal_explorer --format csv config.ini tags
+    $ data_portal_explorer --format csv config.ini destination_path tags
 
 Themes
 ~~~~~~
 
 The ``themes`` command gets a list of the themes used to group the datasets/packages::
 
-    $ data_portal_explorer --format csv config.ini themes
+    $ data_portal_explorer --format csv config.ini destination_path themes
 
 Resources
 ~~~~~~~~~
@@ -108,4 +108,4 @@ The ``resources`` command gets metadata, and if the resource file is in a readab
 format, field names and dates from about the resources in a repository datasets/packages.
 This command needs to be run after the ``packages`` command::
 
-    $ data_portal_explorer --format csv config.ini resources
+    $ data_portal_explorer --format csv config.ini destination_path resources
