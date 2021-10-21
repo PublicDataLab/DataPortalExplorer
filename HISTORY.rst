@@ -2,8 +2,13 @@
 History
 =======
 
-[Unreleased] - yyyy-mm-dd
+[Unreleased] - 2021-10-21
 --------------------
+
+Fixed
+~~~~~
+* Add missing destination path to the usage documentation.
+
 
 [0.1.9] - 2021-10-11
 --------------------
