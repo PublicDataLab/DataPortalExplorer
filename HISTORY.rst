@@ -2,6 +2,14 @@
 History
 =======
 
+[Unreleased] - yyyy-mm-dd
+---------------------
+
+Fixed
+~~~~~
+* Add missing documentation about logging configuration.
+
+
 [0.1.10] - 2021-10-21
 ---------------------
 

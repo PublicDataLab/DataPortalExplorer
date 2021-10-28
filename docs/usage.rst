@@ -39,9 +39,16 @@ Configuration
 -------------
 
 Data Portal Explorer makes use of a configuration file to define which data repositories
-to harvest data from. Before using the tool create a ``config.ini`` following the format:
+to harvest data from and a logging configuration file.
+
+Before using the tool create a ``config.ini`` following the format:
 
 .. literalinclude:: ../config.ini
+    :language: ini
+
+And a logging configuration file ``logging.ini`` following the format:
+
+.. literalinclude:: ../logging.ini
     :language: ini
 
 Then tell the tool which configuration file to use by passing the path to the tool, for
