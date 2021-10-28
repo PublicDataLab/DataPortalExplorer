@@ -115,4 +115,4 @@ The ``resources`` command gets metadata, and if the resource file is in a readab
 format, field names and dates from about the resources in a repository datasets/packages.
 This command needs to be run after the ``packages`` command::
 
-    $ data_portal_explorer --format csv config.ini destination_path resources
+    $ data_portal_explorer --format csv config.ini destination_path resources destination_path/packages.json
