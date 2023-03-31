@@ -214,7 +214,7 @@ def get_packages_requests(portals, workers, namespace, rows, limit):
                 start = 0
                 number_of_requests = max(int(n / rows), 1)
 
-                for i in range(number_of_requests):
+                for _ in range(number_of_requests):
                     requests.append([portal, namespace, start, rows])
                     start += rows
             except CKANAPIError as e:

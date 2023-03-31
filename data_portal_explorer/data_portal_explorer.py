@@ -27,8 +27,8 @@ def get_extensions(portal):
 
 
 @lru_cache(maxsize=64)
-def get_remote_ckan(portal_url, get_only=False):
-    return RemoteCKAN(portal_url, get_only=True)
+def get_remote_ckan(portal_url, get_only=True):
+    return RemoteCKAN(portal_url, get_only=get_only)
 
 
 def get_facets(portal, name):
@@ -41,7 +41,7 @@ def get_facets(portal, name):
 
     if r and facet_field in r["facets"]:
         data = r["facets"][facet_field]
-        return dict(sorted(data.items(), key=lambda t: t[0].lower()))
+        return dict(sorted(data.items(), key=lambda t: t[0].lower().strip()))
 
     return {}
 
@@ -54,8 +54,6 @@ def get_number_of_packages(portal):
         return r["count"]
     except CKANAPIError:
         return -1
-
-    return 0
 
 
 def get_packages(portal, namespace, start, rows):
