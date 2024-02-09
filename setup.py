@@ -37,7 +37,7 @@ if sys.argv[-1] == "publish":
 
 setup(
     author="Kings Digital Lab",
-    author_email="jmvieira@pm.me",
+    author_email="jose.m.vieira@kcl.ac.uk",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
@@ -65,6 +65,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/kingsdigitallab/DataPortalExplorer",
-    version="0.2.0",
+    version="0.1.12",
     zip_safe=False,
 )
