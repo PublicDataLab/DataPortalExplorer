@@ -2,7 +2,7 @@
 History
 =======
 
-[Unreleased] - yyyy-MM-dd
+[0.2.0] - yyyy-MM-dd
 ---------------------
 
 Fixed
