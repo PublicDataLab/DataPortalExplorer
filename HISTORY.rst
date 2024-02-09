@@ -2,6 +2,14 @@
 History
 =======
 
+[Unreleased] - yyyy-MM-dd
+---------------------
+
+Fixed
+~~~~~
+* Update requirements to supported versions of packages.
+
+
 [0.1.11] - 2021-10-28
 ---------------------
 
