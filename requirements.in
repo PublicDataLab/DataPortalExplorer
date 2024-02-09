@@ -1,5 +1,0 @@
-ckanapi>=4,<5
-click>=7,<8
-pandas>=0.25,<0.26
-tqdm>=4,<5
-xlrd>=1.2,<1.3
