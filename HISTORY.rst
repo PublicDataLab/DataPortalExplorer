@@ -2,6 +2,14 @@
 History
 =======
 
+[0.1.12] - 2024-02-09
+---------------------
+
+Fixed
+~~~~~
+* Update requirements to supported versions of packages.
+
+
 [0.1.11] - 2021-10-28
 ---------------------
 
